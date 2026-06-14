@@ -16,8 +16,23 @@
 
 ## 起動方法
 
+初回は以下の手順でセットアップします。
+
 ```powershell
-cd C:\PoC\legacy-rpa-agent
+git clone https://github.com/aaa473785-code/legacy-rpa-agent.git
+cd legacy-rpa-agent
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+python -m streamlit run app.py
+```
+
+既にローカルに展開済みの場合は、プロジェクトフォルダに移動してから以下を実行します。
+
+```powershell
 python -m pip install -r requirements.txt
 python -m playwright install chromium
 python -m streamlit run app.py
