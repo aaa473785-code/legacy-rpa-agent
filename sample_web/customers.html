@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Sample Legacy Customer Search</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 32px; background: #f6f7fb; color: #1f2937; }
+    .card { background: white; border-radius: 16px; padding: 24px; max-width: 920px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    input, button { font-size: 16px; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
+    button { cursor: pointer; background: #111827; color: white; margin-left: 8px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; background: white; }
+    th, td { border-bottom: 1px solid #e5e7eb; text-align: left; padding: 10px; }
+    th { background: #f3f4f6; }
+    .muted { color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>顧客検索サンプル</h1>
+    <p class="muted">legacy-rpa-agent の Playwright 操作確認用ページです。</p>
+
+    <label for="keyword">顧客名</label>
+    <input id="keyword" placeholder="例: 山田" autocomplete="off">
+    <button id="search">検索</button>
+    <button id="export">CSV出力</button>
+
+    <p id="result-count">検索結果: 0件</p>
+
+    <table id="results">
+      <thead>
+        <tr><th>customer_id</th><th>name</th><th>status</th><th>last_order_date</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+<script>
+const customers = [
+  {customer_id: "C001", name: "山田太郎", status: "active", last_order_date: "2026-05-20"},
+  {customer_id: "C002", name: "佐藤花子", status: "active", last_order_date: "2026-05-31"},
+  {customer_id: "C003", name: "鈴木一郎", status: "inactive", last_order_date: "2025-12-10"},
+  {customer_id: "C004", name: "田中次郎", status: "active", last_order_date: "2026-06-01"},
+  {customer_id: "C005", name: "山田花子", status: "active", last_order_date: "2026-06-08"}
+];
+let currentRows = [];
+
+function render(rows) {
+  currentRows = rows;
+  const tbody = document.querySelector("#results tbody");
+  tbody.innerHTML = "";
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.customer_id}</td><td>${row.name}</td><td>${row.status}</td><td>${row.last_order_date}</td>`;
+    tbody.appendChild(tr);
+  }
+  document.querySelector("#result-count").textContent = `検索結果: ${rows.length}件`;
+}
+
+function search() {
+  const keyword = document.querySelector("#keyword").value.trim();
+  const rows = keyword ? customers.filter(c => c.name.includes(keyword)) : customers;
+  render(rows);
+}
+
+function exportCsv() {
+  const header = ["customer_id", "name", "status", "last_order_date"];
+  const lines = [header.join(",")];
+  for (const row of currentRows) {
+    lines.push(header.map(k => row[k]).join(","));
+  }
+  const blob = new Blob([lines.join("\n")], {type: "text/csv;charset=utf-8"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "customers_export.csv";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+document.querySelector("#search").addEventListener("click", search);
+document.querySelector("#export").addEventListener("click", exportCsv);
+render(customers);
+</script>
+</body>
+</html>

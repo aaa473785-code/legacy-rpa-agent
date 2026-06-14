@@ -1,0 +1,5 @@
+customer_id,name,status,last_order_date
+C001,山田太郎,active,2026-05-20
+C002,佐藤花子,active,2026-05-31
+C003,鈴木一郎,inactive,2025-12-10
+C004,田中次郎,active,2026-06-01
