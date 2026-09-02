@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from .action_logger import append_action_log
+from datetime import datetime
 
 
-def dry_run_browser_action(action: str, target: str) -> str:
-    """Dry-run placeholder used before real Playwright/pywinauto execution."""
-    message = f"DRY RUN: {target} に対して {action} を実行予定"
-    append_action_log(
-        tool="dry_run",
-        action=action,
-        status="planned",
-        detail={"target": target, "message": message},
-    )
-    return message
+def dry_run_browser_action(keyword: str) -> dict:
+    return {
+        "mode": "dry_run",
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "steps": [
+            "サンプルWeb画面を開く",
+            f"顧客名に「{keyword}」を入力する",
+            "検索ボタンを押す",
+            "結果件数を確認する",
+            "CSV出力ボタンを押す",
+            "出力CSVを確認する",
+        ],
+        "note": "DRY RUNのため実際の画面操作は行っていません。",
+    }

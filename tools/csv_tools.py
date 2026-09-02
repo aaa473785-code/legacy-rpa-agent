@@ -1,11 +1,25 @@
 from __future__ import annotations
 
 from pathlib import Path
+
 import pandas as pd
 
 
-def read_csv_preview(path: str, max_rows: int = 20) -> pd.DataFrame:
-    csv_path = Path(path)
-    if not csv_path.exists():
-        raise FileNotFoundError(f"CSVが見つかりません: {csv_path}")
-    return pd.read_csv(csv_path).head(max_rows)
+def read_csv_preview(path: Path) -> dict:
+    if not path.exists():
+        raise FileNotFoundError(f"CSVが見つかりません: {path}")
+
+    df = pd.read_csv(path, encoding="utf-8-sig")
+
+    summary = {
+        "path": str(path),
+        "rows": int(len(df)),
+        "columns": list(df.columns),
+        "blank_cells": int(df.isna().sum().sum()),
+        "duplicate_rows": int(df.duplicated().sum()),
+    }
+
+    return {
+        "summary": summary,
+        "preview": df.head(20),
+    }
